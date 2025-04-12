@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cosmic Interview Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Orbitron:wght@500&family=Zilla+Slab&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Zilla Slab', serif;
+      background: black;
+      cursor: url('cursor.jfif'), auto;
+      transition: opacity 1s ease;
+      color: #e6e6ff;
+    }
+
+    canvas#starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0; 
+      background: transparent;
+      
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 2rem;
+      text-align: center;
+      z-index: 2; 
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #a076ff;
+    }
+
+    #avatar {
+      max-width: 220px;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(122, 255, 255, 0.6);
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 1s ease, transform 0.8s ease;
+    }
+
+    #avatar.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .glassbox {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(180, 100, 255, 0.2);
+    }
+
+    .question {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.4rem;
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-bottom: 2px solid #a076ff;
+      color: #fff;
+      font-size: 1.1rem;
+      width: 80%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      text-align: center;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #bbb;
+    }
+
+    .fade-in {
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("oEOM2zgAZMbIC3y5F"); // Replace with your EmailJS public key
+    })();
+  </script>
+  
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <!--<div class="overlay"></div>-->
+  <div class="container">
+    <h1>👽 Cosmic Interview Portal</h1>
+    <img id="avatar" src="alien.jfif" alt="Alien Mystic" />
+    <div class="glassbox fade-in">
+      <div id="question" class="question">Initializing cosmic frequency...</div>
+      <input type="text" id="input" placeholder="Speak your truth..." autofocus />
+    </div>
+    <form id="cosmicForm" style="display:none;">
+      <input type="text" name="user_name" id="formName" />
+      <textarea name="user_answers" id="formAnswers"></textarea>
+    </form>
+    
+  </div>
+
+  <audio id="ambient" src="audio/bg.mp3" autoplay loop></audio>
+  <audio id="blip" src="audio/blip.mp3"></audio>
+
+ 
+<script>
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Create star objects
+  for (let i = 0; i < 300; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      speed: Math.random() * 0.5 + 0.2
+    });
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      s.y += s.speed;
+      if (s.y > canvas.height) {
+        s.y = 0;
+        s.x = Math.random() * canvas.width;
+      }
+    }
+
+    requestAnimationFrame(drawStars);
+  }
+
+  drawStars();
+</script>
+
+<script>
+    const questions = [
+    "Which alien pet would suit your vibe — blobfish, laser cat, or space bunny ?" ,
+      "Seeker of truth... What color is silence in your dreams?",
+      "Would you rather sneeze glitter in zero gravity or hiccup sound waves that summon dolphins?",
+      "If you had to be stuck in space with one person, who would you choose to have? ",
+      "What’s your most alien habit, according to your friends?",
+      "What’s the entrance theme song your UFO plays when you beam down?",
+      "You're designing a spacesuit with personality — what ridiculous feature would it have?",
+      "You’re invited to a zero-gravity talent show. What nonsense skill are you performing?",
+      "What would an alien HR department find most suspicious about you?",
+      "What ancient memory do you carry from another lifetime?",
+      "If your thoughts were space weather, would it be clear skies or meteor showers today?",
+      "If you could throw something or someone into the sun, what would it be?",
+      
+
+    ];
+
+    let index = 0;
+    const input = document.getElementById("input");
+    const question = document.getElementById("question");
+    const avatar = document.getElementById("avatar");
+
+    function askQuestion() {
+      avatar.classList.remove("visible");
+      setTimeout(() => {
+        question.textContent = questions[index];
+        avatar.classList.add("visible");
+        input.value = "";
+        input.focus();
+      }, 500);
+    }
+
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        document.getElementById("blip").play();
+        index++;
+        if (index < questions.length) {
+          askQuestion();
+        } else {
+          question.textContent = "✨ Interview complete. Galactic archives updated with your essence.";
+          input.remove();
+          avatar.classList.remove("visible");
+        }
+      }
+    });
+
+    const nameFromStorage = localStorage.getItem("cosmicName");
+    if (nameFromStorage) {
+      question.textContent = `🌠 Welcome, ${nameFromStorage}. Your cosmic alignment is under review...`;
+    }
+
+    setTimeout(() => {
+      askQuestion();
+    }, 2000);
+    // Prepare to store answers
+let cosmicName = nameFromStorage || "Unnamed Starwalker";
+let answers = [];
+
+// Replace previous input listener
+input.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    const answer = input.value.trim();
+    if (answer !== "") {
+      answers.push(answer);
+      index++;
+      if (index < questions.length) {
+        askQuestion();
+      } else {
+        finishInterview();
+      }
+    }
+  }
+});
+
+function finishInterview() {
+  question.textContent = "Stellar alignment complete. Compiling cosmic report...";
+  input.remove();
+  avatar.classList.remove("visible");
+
+  // Fill hidden form
+  document.getElementById("formName").value = cosmicName;
+  document.getElementById("formAnswers").value = answers
+    .map((ans, i) => `Q${i + 1}: ${questions[i]}\nA: ${ans}`)
+    .join("\n\n");
+
+    emailjs.send("service_opeglw6", "template_f54tqjr", {
+  user_name: "Test Starwalker",
+  user_answers: "🛸 Q1: What is your quest?\nA: To vibe with cosmic jellyfish."
+})
+.then(() => {
+  question.textContent = "✅ Test soul transmission successful!";
+})
+.catch((error) => {
+  question.textContent = "❌ Test failed. Check the console.";
+  console.error("EmailJS Test Error:", error);
+});
+
+}
+
+  
+ </script> 
+</body>
+</html>

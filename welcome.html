@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Galactic Entry Protocol</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      cursor: url('images/cursor.png'), auto;
+      background: radial-gradient(ellipse at center, #0d0221 0%, #000000 100%);
+      color: #e0e0ff;
+      transition: opacity 1s ease;
+    }
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: black;
+    }
+    .container {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    input {
+      padding: 1rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      width: 260px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      margin-top: 1rem;
+      border-bottom: 2px solid #9c77ff;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 0.7rem 1.6rem;
+      font-size: 1rem;
+      background: #9c77ff;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.1);
+    }
+    #verifying {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      display: none;
+    }
+    .dots::after {
+      content: '';
+      animation: dots 1s infinite steps(4);
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+    #verifiedText {
+      color: #a0ffb3;
+      margin-top: 1rem;
+      display: none;
+    }
+    p {
+      margin-top: -10px;
+      color: #9c77ff;
+    }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="container">
+  <h1>🔍 Galactic Identification Protocol Initiated</h1>
+  <p>State your Earth designation below</p>
+  <input type="text" id="earthName" placeholder="Enter your Earth name">
+  <button onclick="verifyName()">Transmit Identification</button>
+  <div id="verifying" class="dots">🧠 Scanning Neural Frequencies</div>
+  <div id="verifiedText"></div>
+  <button id="continueBtn" onclick="goToOnboarding()" style="display:none">Proceed to Interplanetary Onboarding 🚀</button>
+</div>
+<audio id="bgMusic" src="audio/bg.mp3" loop autoplay></audio>
+<audio id="clickSound" src="audio/blip.mp3"></audio>
+<audio id="verifySound" src="audio/verify.mp3"></audio>
+<script>
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const numStars = 400;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.onresize = resize;
+  resize();
+
+  for (let i = 0; i < numStars; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.5,
+      speed: Math.random() * 0.5 + 0.2
+    });
+  }
+
+  function animateStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    stars.forEach(star => {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+      ctx.fill();
+      star.y += star.speed;
+      if (star.y > canvas.height) {
+        star.y = 0;
+        star.x = Math.random() * canvas.width;
+      }
+    });
+    requestAnimationFrame(animateStars);
+  }
+  animateStars();
+
+  function verifyName() {
+    const name = document.getElementById("earthName").value.trim();
+    if (!name) {
+      alert("Enter your Earth name, traveler.");
+      return;
+    }
+    document.getElementById("clickSound").play();
+    localStorage.setItem("earthName", name);
+    document.getElementById("verifying").style.display = "block";
+    document.getElementById("verifySound").play();
+
+    setTimeout(() => {
+      document.getElementById("verifying").style.display = "none";
+      document.getElementById("verifiedText").innerHTML = `✅ Designation confirmed, <span style='color:#fff'>${name}</span>.<br>👽 Welcome aboard, Ambassador from Earth.<br>Prepare for interplanetary onboarding...`;
+      document.getElementById("verifiedText").style.display = "block";
+      document.getElementById("continueBtn").style.display = "inline-block";
+    }, 2200);
+  }
+
+  function goToOnboarding() {
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+      window.location.href = "onboard.html";
+    }, 1000);
+  }
+</script>
+</body>
+</html>
